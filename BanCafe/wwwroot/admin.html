@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Quản Trị – Durapure</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        durian: {
+                            DEFAULT: '#1D3524',
+                            light: '#294C2F',
+                            lighter: '#547044',
+                            accent: '#FFF5C7',
+                            gold: '#F2C94C',
+                            dark: '#1D3524',
+                        },
+                        forest: {
+                            DEFAULT: '#78952F',
+                            hover: '#5E7624',
+                            light: '#91AF42',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        sans: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #1D3524;
+            color: #FFF5C7;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen bg-durian-dark">
+
+    <!-- Header / Navbar Container -->
+    <header id="navbar-container" class="bg-durian-dark/95 border-b border-durian-lighter sticky top-0 z-40 backdrop-blur-sm">
+        <!-- Will be loaded dynamically from app.js -->
+    </header>
+
+    <!-- Admin Panel Body -->
+    <main class="flex-grow py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+
+
+
+            <!-- SECTION 2: Admin Dashboard (Hidden by default) -->
+            <section id="admin-dashboard-sec" class="hidden space-y-8">
+
+                <!-- Dashboard Header -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-durian-lighter pb-6">
+                    <div>
+                        <h1 class="text-3xl font-bold text-white font-serif">Hệ Thống Quản Trị</h1>
+                        <p class="text-xs text-durian-accent">Quản lý nội dung, kiểm tra đơn hàng và thiết kế bao bì</p>
+                    </div>
+                    <button onclick="handleUserLogout()" class="bg-durian-light border border-durian-lighter text-xs text-durian-gold hover:bg-durian hover:text-white px-4 py-2 rounded transition-all">
+                        Đăng xuất
+                    </button>
+                </div>
+
+                <!-- Tabs and tables -->
+                <div class="bg-durian-light border border-durian-lighter rounded-lg overflow-hidden">
+                    <!-- Tab Header Links -->
+                    <div class="flex border-b border-durian-lighter bg-durian-dark/50 overflow-x-auto whitespace-nowrap scrollbar-none">
+                        <button onclick="switchTab('dashboard')" id="tab-btn-dashboard" class="px-6 py-4 text-xs font-semibold text-durian-gold border-b-2 border-durian-gold focus:outline-none uppercase flex-shrink-0 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
+                            Tổng quan
+                        </button>
+                        <button onclick="switchTab('orders')" id="tab-btn-orders" class="px-6 py-4 text-xs font-semibold text-durian-accent hover:text-white focus:outline-none uppercase flex-shrink-0 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                            Đơn hàng
+                        </button>
+                        <button onclick="switchTab('customers')" id="tab-btn-customers" class="px-6 py-4 text-xs font-semibold text-durian-accent hover:text-white focus:outline-none uppercase flex-shrink-0 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                            Khách hàng
+                        </button>
+                        <button onclick="switchTab('designs')" id="tab-btn-designs" class="px-6 py-4 text-xs font-semibold text-durian-accent hover:text-white focus:outline-none uppercase flex-shrink-0">Yêu cầu Bao Bì</button>
+                        <button onclick="switchTab('products')" id="tab-btn-products" class="px-6 py-4 text-xs font-semibold text-durian-accent hover:text-white focus:outline-none uppercase flex-shrink-0">Sản phẩm</button>
+                        <button onclick="switchTab('blogs')" id="tab-btn-blogs" class="px-6 py-4 text-xs font-semibold text-durian-accent hover:text-white focus:outline-none uppercase flex-shrink-0">Tin Tức</button>
+                        <button onclick="switchTab('farm-videos')" id="tab-btn-farm-videos" class="px-6 py-4 text-xs font-semibold text-durian-accent hover:text-white focus:outline-none uppercase flex-shrink-0">Video Nông Trại</button>
+                        <button onclick="switchTab('settings')" id="tab-btn-settings" class="px-6 py-4 text-xs font-semibold text-durian-accent hover:text-white focus:outline-none uppercase flex-shrink-0">Cấu hình Web</button>
+                    </div>
+
+                    <!-- Tab Content Panel -->
+                    <div class="p-6">
+
+                        <!-- TAB: Dashboard -->
+                        <div id="tab-panel-dashboard" class="space-y-8 block">
+                            <!-- Stats summary cards -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+                                <div class="bg-durian border border-durian-lighter p-6 rounded-lg flex items-center justify-between shadow-lg transform hover:scale-105 transition-transform duration-300">
+                                    <div>
+                                        <p class="text-xs text-durian-accent uppercase font-bold">Tổng doanh thu</p>
+                                        <h3 id="stat-revenue" class="text-2xl font-bold text-durian-gold mt-1">0đ</h3>
+                                    </div>
+                                    <div class="p-3 bg-forest text-white rounded-full">
+                                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    </div>
+                                </div>
+                                <div class="bg-durian border border-durian-lighter p-6 rounded-lg flex items-center justify-between shadow-lg transform hover:scale-105 transition-transform duration-300">
+                                    <div>
+                                        <p class="text-xs text-durian-accent uppercase font-bold">Tổng đơn hàng</p>
+                                        <h3 id="stat-orders" class="text-3xl font-bold text-white mt-1">0</h3>
+                                    </div>
+                                    <div class="p-3 bg-blue-900 text-blue-300 rounded-full">
+                                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+                                    </div>
+                                </div>
+                                <div class="bg-durian border border-durian-lighter p-6 rounded-lg flex items-center justify-between shadow-lg transform hover:scale-105 transition-transform duration-300">
+                                    <div>
+                                        <p class="text-xs text-durian-accent uppercase font-bold">Tổng khách hàng</p>
+                                        <h3 id="stat-customers" class="text-3xl font-bold text-white mt-1">0</h3>
+                                    </div>
+                                    <div class="p-3 bg-purple-900 text-purple-300 rounded-full">
+                                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                                    </div>
+                                </div>
+                                <div class="bg-durian border border-durian-lighter p-6 rounded-lg flex items-center justify-between shadow-lg transform hover:scale-105 transition-transform duration-300">
+                                    <div>
+                                        <p class="text-xs text-durian-accent uppercase font-bold">Yêu cầu bao bì</p>
+                                        <h3 id="stat-designs" class="text-3xl font-bold text-white mt-1">0</h3>
+                                    </div>
+                                    <div class="p-3 bg-orange-900 text-orange-300 rounded-full">
+                                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                    </div>
+                                </div>
+                                <div class="bg-durian border border-durian-lighter p-6 rounded-lg flex items-center justify-between shadow-lg transform hover:scale-105 transition-transform duration-300">
+                                    <div>
+                                        <p class="text-xs text-durian-accent uppercase font-bold">Lượt truy cập</p>
+                                        <h3 id="stat-visits" class="text-3xl font-bold text-white mt-1">0</h3>
+                                    </div>
+                                    <div class="p-3 bg-teal-900 text-teal-300 rounded-full">
+                                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h3 class="font-serif text-lg font-bold text-durian-gold mb-4 border-b border-durian-lighter pb-2">Sản phẩm Bán Chạy Nhất</h3>
+                            <div class="overflow-x-auto bg-durian rounded-lg shadow-inner">
+                                <table class="min-w-full divide-y divide-durian-lighter">
+                                    <thead class="bg-durian-dark/60">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-bold text-durian-gold uppercase">Sản phẩm</th>
+                                            <th class="px-6 py-3 text-right text-xs font-bold text-durian-gold uppercase">Lượt mua</th>
+                                            <th class="px-6 py-3 text-right text-xs font-bold text-durian-gold uppercase">Doanh thu mang lại</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-top-products-table" class="divide-y divide-durian-lighter/40">
+                                        <!-- Dynamic content -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- TAB: Customers -->
+                        <div id="tab-panel-customers" class="space-y-4 hidden">
+                            <h3 class="font-serif text-lg font-bold text-white mb-4">Danh sách Khách Hàng</h3>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-durian-lighter">
+                                    <thead class="bg-durian-dark/40">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-bold text-durian-gold uppercase">Tên Khách Hàng</th>
+                                            <th class="px-6 py-3 text-left text-xs font-bold text-durian-gold uppercase">Thông tin liên hệ</th>
+                                            <th class="px-6 py-3 text-right text-xs font-bold text-durian-gold uppercase">Số lượng đơn</th>
+                                            <th class="px-6 py-3 text-right text-xs font-bold text-durian-gold uppercase">Tổng chi tiêu</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-customers-table" class="divide-y divide-durian-lighter/40">
+                                        <!-- Will load dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- TAB: Orders -->
+                        <div id="tab-panel-orders" class="space-y-4 hidden">
+                            <h3 class="font-serif text-lg font-bold text-white mb-4">Danh sách Đơn hàng</h3>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-durian-lighter">
+                                    <thead class="bg-durian-dark/40">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-bold text-durian-gold uppercase">Mã đơn</th>
+                                            <th class="px-6 py-3 text-left text-xs font-bold text-durian-gold uppercase">Khách hàng</th>
+                                            <th class="px-6 py-3 text-left text-xs font-bold text-durian-gold uppercase">Địa chỉ giao hàng</th>
+                                            <th class="px-6 py-3 text-left text-xs font-bold text-durian-gold uppercase">Tổng tiền</th>
+                                            <th class="px-6 py-3 text-left text-xs font-bold text-durian-gold uppercase">Trạng thái</th>
+                                            <th class="px-6 py-3 text-right text-xs font-bold text-durian-gold uppercase">Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-orders-table" class="divide-y divide-durian-lighter/40">
+                                        <!-- Will load dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- TAB: Designs -->
+                        <div id="tab-panel-designs" class="hidden space-y-4">
+                            <h3 class="font-serif text-lg font-bold text-white mb-4">Yêu cầu Cá nhân hóa bao bì</h3>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-durian-lighter">
+                                    <thead class="bg-durian-dark/40">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-bold text-durian-gold uppercase">Mã yêu cầu</th>
+                                            <th class="px-6 py-3 text-left text-xs font-bold text-durian-gold uppercase">Khách hàng</th>
+                                            <th class="px-6 py-3 text-left text-xs font-bold text-durian-gold uppercase">Ý tưởng thiết kế</th>
+                                            <th class="px-6 py-3 text-left text-xs font-bold text-durian-gold uppercase">File nhãn dán</th>
+                                            <th class="px-6 py-3 text-left text-xs font-bold text-durian-gold uppercase">Ngày gửi</th>
+                                            <th class="px-6 py-3 text-left text-xs font-bold text-durian-gold uppercase">Trạng thái</th>
+                                            <th class="px-6 py-3 text-right text-xs font-bold text-durian-gold uppercase">Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-designs-table" class="divide-y divide-durian-lighter/40">
+                                        <!-- Will load dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- TAB: Products -->
+                        <div id="tab-panel-products" class="hidden space-y-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-serif text-lg font-bold text-white">Quản lý Sản phẩm</h3>
+                                <button onclick="showAddProductModal()" class="bg-forest hover:bg-forest-hover text-white text-xs font-bold px-4 py-2 rounded transition-all">
+                                    + THÊM SẢN PHẨM MỚI
+                                </button>
+                            </div>
+                            <div id="admin-products-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Loaded dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- TAB: Blogs -->
+                        <div id="tab-panel-blogs" class="hidden space-y-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-serif text-lg font-bold text-white">Quản lý Bài viết Tin tức</h3>
+                                <button onclick="showAddBlogModal()" class="bg-forest hover:bg-forest-hover text-white text-xs font-bold px-4 py-2 rounded transition-all">
+                                    + VIẾT BÀI MỚI
+                                </button>
+                            </div>
+                            <div id="admin-blogs-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Loaded dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- TAB: Farm Videos -->
+                        <div id="tab-panel-farm-videos" class="hidden space-y-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-serif text-lg font-bold text-white">Quản lý Video Nông Trại</h3>
+                                <button onclick="showAddFarmVideoModal()" class="bg-forest hover:bg-forest-hover text-white text-xs font-bold px-4 py-2 rounded transition-all">
+                                    + THÊM VIDEO MỚI
+                                </button>
+                            </div>
+                            <div id="admin-farm-videos-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Loaded dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- TAB: Settings -->
+                        <div id="tab-panel-settings" class="hidden space-y-6">
+                            <h3 class="font-serif text-lg font-bold text-white mb-4">Cấu hình Hệ thống & SEO</h3>
+
+                            <form onsubmit="handleSaveSettings(event)" class="max-w-2xl space-y-4">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="set-seo-title" class="block text-xs font-semibold text-durian-accent uppercase mb-2">Tiêu đề SEO Trang web</label>
+                                        <input type="text" id="set-seo-title" class="w-full bg-durian border border-durian-lighter rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-durian-gold">
+                                    </div>
+                                    <div>
+                                        <label for="set-phone" class="block text-xs font-semibold text-durian-accent uppercase mb-2">Số điện thoại Hotline</label>
+                                        <input type="text" id="set-phone" class="w-full bg-durian border border-durian-lighter rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-durian-gold">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="set-seo-desc" class="block text-xs font-semibold text-durian-accent uppercase mb-2">Mô tả SEO (Meta Description)</label>
+                                    <textarea id="set-seo-desc" rows="3" class="w-full bg-durian border border-durian-lighter rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-durian-gold"></textarea>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="set-email" class="block text-xs font-semibold text-durian-accent uppercase mb-2">Email hỗ trợ</label>
+                                        <input type="email" id="set-email" class="w-full bg-durian border border-durian-lighter rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-durian-gold">
+                                    </div>
+                                    <div>
+                                        <label for="set-address" class="block text-xs font-semibold text-durian-accent uppercase mb-2">Địa chỉ văn phòng</label>
+                                        <input type="text" id="set-address" class="w-full bg-durian border border-durian-lighter rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-durian-gold">
+                                    </div>
+                                </div>
+                                <button type="submit" class="bg-forest hover:bg-forest-hover text-white text-xs font-bold px-6 py-2.5 rounded transition-all">
+                                    LƯU THAY ĐỔI
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+
+            </section>
+
+        </div>
+    </main>
+
+    <!-- MODAL: Product Add/Edit Form -->
+    <div id="prod-modal" class="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-durian-light border border-durian-lighter w-full max-w-lg rounded-lg overflow-hidden shadow-2xl">
+            <div class="p-6 border-b border-durian-lighter bg-durian flex justify-between items-center">
+                <h3 id="prod-modal-title" class="font-serif text-lg font-bold text-durian-gold">Thêm Sản Phẩm</h3>
+                <button onclick="hideProductModal()" class="text-durian-accent hover:text-white">&times;</button>
+            </div>
+
+            <form id="prod-form" onsubmit="handleSaveProduct(event)" class="p-6 space-y-4">
+                <div>
+                    <label for="prod-name" class="block text-xs font-semibold text-durian-accent mb-2">Tên sản phẩm *</label>
+                    <input type="text" id="prod-name" required class="w-full bg-durian border border-durian-lighter rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-durian-gold">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="prod-price" class="block text-xs font-semibold text-durian-accent mb-2">Giá bán (VNĐ) *</label>
+                        <input type="number" id="prod-price" required class="w-full bg-durian border border-durian-lighter rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-durian-gold">
+                    </div>
+                    <div>
+                        <label for="prod-unit" class="block text-xs font-semibold text-durian-accent mb-2">Quy cách (đơn vị) *</label>
+                        <input type="text" id="prod-unit" required placeholder="Ví dụ: 1kg, Hộp 2kg" class="w-full bg-durian border border-durian-lighter rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-durian-gold">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="prod-img-file" class="block text-xs font-semibold text-durian-accent mb-2">Chọn ảnh sản phẩm từ thiết bị</label>
+                        <input type="file" id="prod-img-file" accept="image/*" class="w-full bg-durian border border-durian-lighter rounded px-3 py-1.5 text-xs text-durian-accent file:mr-3 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-bold file:bg-durian-gold file:text-durian-dark hover:file:bg-white cursor-pointer focus:outline-none focus:border-durian-gold">
+                    </div>
+                    <div>
+                        <label for="prod-img" class="block text-xs font-semibold text-durian-accent mb-2">Hoặc dùng đường dẫn ảnh URL</label>
+                        <input type="text" id="prod-img" placeholder="images/durian/ri6.png" class="w-full bg-durian border border-durian-lighter rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-durian-gold">
+                    </div>
+                </div>
+                <div>
+                    <label for="prod-roast" class="block text-xs font-semibold text-durian-accent mb-2">Tùy chọn giao hàng (ngăn cách bằng dấu phẩy)</label>
+                    <input type="text" id="prod-roast" placeholder="Nguyên trái, Tách múi, Cấp đông" class="w-full bg-durian border border-durian-lighter rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-durian-gold">
+                </div>
+                <div>
+                    <label for="prod-desc" class="block text-xs font-semibold text-durian-accent mb-2">Mô tả ngắn sản phẩm</label>
+                    <textarea id="prod-desc" rows="3" class="w-full bg-durian border border-durian-lighter rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-durian-gold"></textarea>
+                </div>
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button type="button" onclick="hideProductModal()" class="border border-durian-lighter text-durian-accent px-4 py-2 rounded text-xs">Hủy</button>
+                    <button type="submit" class="bg-forest hover:bg-forest-hover text-white px-6 py-2 rounded text-xs font-bold">LƯU SẢN PHẨM</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Blog Add/Edit Form -->
+    <div id="blog-modal" class="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-durian-light border border-durian-lighter w-full max-w-lg rounded-lg overflow-hidden shadow-2xl">
+            <div class="p-6 border-b border-durian-lighter bg-durian flex justify-between items-center">
+                <h3 id="blog-modal-title" class="font-serif text-lg font-bold text-durian-gold">Viết Bài Viết Mới</h3>
+                <button onclick="hideBlogModal()" class="text-durian-accent hover:text-white">&times;</button>
+            </div>
+
+            <form id="blog-form" onsubmit="handleSaveBlog(event)" class="p-6 space-y-4">
+                <div>
+                    <label for="blog-title" class="block text-xs font-semibold text-durian-accent mb-2">Tiêu đề bài viết *</label>
+                    <input type="text" id="blog-title" required class="w-full bg-durian border border-durian-lighter rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-durian-gold">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="blog-img-file" class="block text-xs font-semibold text-durian-accent mb-2">Chọn ảnh đại diện từ thiết bị</label>
+                        <input type="file" id="blog-img-file" accept="image/*" class="w-full bg-durian border border-durian-lighter rounded px-3 py-1.5 text-xs text-durian-accent file:mr-3 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-bold file:bg-durian-gold file:text-durian-dark hover:file:bg-white cursor-pointer focus:outline-none focus:border-durian-gold">
+                    </div>
+                    <div>
+                        <label for="blog-img" class="block text-xs font-semibold text-durian-accent mb-2">Hoặc dùng đường dẫn ảnh URL</label>
+                        <input type="text" id="blog-img" placeholder="images/blog1.jpg" class="w-full bg-durian border border-durian-lighter rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-durian-gold">
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2 py-1">
+                    <input type="checkbox" id="blog-is-video" onchange="toggleVideoUrlField()" class="bg-durian border-durian-lighter rounded">
+                    <label for="blog-is-video" class="text-xs font-semibold text-durian-accent">Bài viết có chứa Video?</label>
+                </div>
+                <div id="blog-video-url-sec" class="hidden">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label for="blog-video-file" class="block text-xs font-semibold text-durian-accent mb-2">Chọn file Video từ thiết bị</label>
+                            <input type="file" id="blog-video-file" accept="video/*" class="w-full bg-durian border border-durian-lighter rounded px-3 py-1.5 text-xs text-durian-accent file:mr-3 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-bold file:bg-durian-gold file:text-durian-dark hover:file:bg-white cursor-pointer focus:outline-none focus:border-durian-gold">
+                        </div>
+                        <div>
+                            <label for="blog-video-url" class="block text-xs font-semibold text-durian-accent mb-2">Hoặc đường dẫn URL Youtube / TikTok</label>
+                            <input type="text" id="blog-video-url" placeholder="https://www.youtube.com/... hoặc https://www.tiktok.com/..." class="w-full bg-durian border border-durian-lighter rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-durian-gold">
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <label for="blog-summary" class="block text-xs font-semibold text-durian-accent mb-2">Tóm tắt ngắn *</label>
+                    <input type="text" id="blog-summary" required class="w-full bg-durian border border-durian-lighter rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-durian-gold">
+                </div>
+                <div>
+                    <label for="blog-content" class="block text-xs font-semibold text-durian-accent mb-2">Nội dung chi tiết</label>
+                    <textarea id="blog-content" rows="4" class="w-full bg-durian border border-durian-lighter rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-durian-gold"></textarea>
+                </div>
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button type="button" onclick="hideBlogModal()" class="border border-durian-lighter text-durian-accent px-4 py-2 rounded text-xs">Hủy</button>
+                    <button type="submit" class="bg-forest hover:bg-forest-hover text-white px-6 py-2 rounded text-xs font-bold">LƯU BÀI VIẾT</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: Farm Video Add/Edit Form -->
+    <div id="farm-video-modal" class="fixed inset-0 bg-black/75 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-durian-light border border-durian-lighter w-full max-w-lg rounded-lg overflow-hidden shadow-2xl">
+            <div class="p-6 border-b border-durian-lighter bg-durian flex justify-between items-center">
+                <h3 id="farm-video-modal-title" class="font-serif text-lg font-bold text-durian-gold">Thêm Video Mới</h3>
+                <button onclick="hideFarmVideoModal()" class="text-durian-accent hover:text-white">&times;</button>
+            </div>
+
+            <form id="farm-video-form" onsubmit="handleSaveFarmVideo(event)" class="p-6 space-y-4">
+                <div>
+                    <label for="farm-video-title" class="block text-xs font-semibold text-durian-accent mb-2">Tiêu đề Video *</label>
+                    <input type="text" id="farm-video-title" required class="w-full bg-durian border border-durian-lighter rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-durian-gold">
+                </div>
+                <div>
+                    <label for="farm-video-desc" class="block text-xs font-semibold text-durian-accent mb-2">Mô tả ngắn</label>
+                    <textarea id="farm-video-desc" rows="3" class="w-full bg-durian border border-durian-lighter rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-durian-gold"></textarea>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="farm-video-img-file" class="block text-xs font-semibold text-durian-accent mb-2">Chọn ảnh thu nhỏ (Thumbnail)</label>
+                        <input type="file" id="farm-video-img-file" accept="image/*" class="w-full bg-durian border border-durian-lighter rounded px-3 py-1.5 text-xs text-durian-accent file:mr-3 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-bold file:bg-durian-gold file:text-durian-dark hover:file:bg-white cursor-pointer focus:outline-none focus:border-durian-gold">
+                    </div>
+                    <div>
+                        <label for="farm-video-img" class="block text-xs font-semibold text-durian-accent mb-2">Hoặc dùng URL ảnh</label>
+                        <input type="text" id="farm-video-img" placeholder="https://..." class="w-full bg-durian border border-durian-lighter rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-durian-gold">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label for="farm-video-file" class="block text-xs font-semibold text-durian-accent mb-2">Chọn file Video từ thiết bị</label>
+                        <input type="file" id="farm-video-file" accept="video/*" class="w-full bg-durian border border-durian-lighter rounded px-3 py-1.5 text-xs text-durian-accent file:mr-3 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-bold file:bg-durian-gold file:text-durian-dark hover:file:bg-white cursor-pointer focus:outline-none focus:border-durian-gold">
+                    </div>
+                    <div>
+                        <label for="farm-video-url" class="block text-xs font-semibold text-durian-accent mb-2">Hoặc đường dẫn Youtube / TikTok URL</label>
+                        <input type="text" id="farm-video-url" placeholder="https://www.youtube.com/... hoặc https://www.tiktok.com/..." class="w-full bg-durian border border-durian-lighter rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-durian-gold">
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button type="button" onclick="hideFarmVideoModal()" class="border border-durian-lighter text-durian-accent px-4 py-2 rounded text-xs">Hủy</button>
+                    <button type="submit" class="bg-forest hover:bg-forest-hover text-white px-6 py-2 rounded text-xs font-bold">LƯU VIDEO</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer Container -->
+    <footer id="footer-container" class="bg-durian-dark border-t border-durian-lighter text-durian-accent">
+        <!-- Will be loaded dynamically from app.js -->
+    </footer>
+
+    <!-- MODAL: Image Preview -->
+    <div id="image-preview-modal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 hidden" onclick="closeImagePreviewModal()">
+        <div class="relative max-w-4xl max-h-[85vh] bg-[#294C2F] border border-[#547044] p-2 rounded-lg shadow-2xl overflow-hidden flex flex-col items-center" onclick="event.stopPropagation()">
+            <button onclick="closeImagePreviewModal()" class="absolute top-2 right-2 text-white bg-black/60 hover:bg-black/80 w-8 h-8 rounded-full flex items-center justify-center text-xl font-bold transition-all z-10">&times;</button>
+            <img id="preview-modal-img" src="" class="max-w-full max-h-[70vh] object-contain rounded">
+            <div class="p-3 text-center flex justify-between items-center bg-durian-dark/80 mt-2 rounded w-full">
+                <span id="preview-modal-filename" class="text-xs text-durian-accent truncate max-w-xs sm:max-w-md"></span>
+                <button id="preview-modal-download-btn" class="bg-forest hover:bg-forest-hover text-white text-xs font-bold px-3 py-1.5 rounded transition-all">
+                    TẢI XUỐNG
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shopping Cart Slide-out Drawer Container -->
+    <div id="cart-drawer-container"></div>
+
+    <!-- Core App JS -->
+    <script src="js/app.js"></script>
+
+    <!-- Tab Switching script -->
+    <script>
+        function switchTab(tabName) {
+            // Hide all tab panels
+            document.getElementById('tab-panel-dashboard').classList.add('hidden');
+            document.getElementById('tab-panel-customers').classList.add('hidden');
+            document.getElementById('tab-panel-orders').classList.add('hidden');
+            document.getElementById('tab-panel-designs').classList.add('hidden');
+            document.getElementById('tab-panel-products').classList.add('hidden');
+            document.getElementById('tab-panel-blogs').classList.add('hidden');
+            document.getElementById('tab-panel-farm-videos').classList.add('hidden');
+            document.getElementById('tab-panel-settings').classList.add('hidden');
+
+            // Deactivate all tab buttons
+            const tabs = ['dashboard', 'customers', 'orders', 'designs', 'products', 'blogs', 'farm-videos', 'settings'];
+            tabs.forEach(t => {
+                const btn = document.getElementById('tab-btn-' + t);
+                btn.classList.remove('text-durian-gold', 'border-b-2', 'border-durian-gold');
+                btn.classList.add('text-durian-accent', 'hover:text-white');
+            });
+
+            // Show active panel
+            document.getElementById('tab-panel-' + tabName).classList.remove('hidden');
+
+            // Activate button
+            const activeBtn = document.getElementById('tab-btn-' + tabName);
+            activeBtn.classList.remove('text-durian-accent', 'hover:text-white');
+            activeBtn.classList.add('text-durian-gold', 'border-b-2', 'border-durian-gold');
+        }
+    </script>
+</body>
+</html>

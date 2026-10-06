@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặt Hàng Thành Công – Durapure</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        durian: {
+                            DEFAULT: '#1D3524',
+                            light: '#294C2F',
+                            lighter: '#547044',
+                            accent: '#FFF5C7',
+                            gold: '#F2C94C',
+                            dark: '#1D3524',
+                        },
+                        forest: {
+                            DEFAULT: '#78952F',
+                            hover: '#5E7624',
+                            light: '#91AF42',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'serif'],
+                        sans: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #1D3524;
+            color: #FFF5C7;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen bg-durian-dark">
+
+    <!-- Header / Navbar Container -->
+    <header id="navbar-container" class="bg-durian-dark/95 border-b border-durian-lighter sticky top-0 z-40 backdrop-blur-sm">
+        <!-- Will be loaded dynamically from app.js -->
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow flex items-center justify-center py-16 px-4">
+        <div class="max-w-xl w-full bg-durian-light border border-durian-lighter rounded-xl shadow-2xl p-8 md:p-10 text-center space-y-8 relative overflow-hidden">
+            <!-- Background Glow Decor -->
+            <div class="absolute -top-24 -left-24 w-48 h-48 bg-forest/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-durian-gold/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <!-- Success Icon -->
+            <div class="mx-auto w-20 h-20 bg-forest/20 rounded-full border border-forest/30 flex items-center justify-center text-forest-light animate-bounce">
+                <svg class="h-10 w-10 text-durian-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                </svg>
+            </div>
+
+            <!-- Header Info -->
+            <div class="space-y-3">
+                <span class="text-durian-gold text-xs font-semibold tracking-widest uppercase font-sans">ĐƠN HÀNG HOÀN TẤT</span>
+                <h1 class="text-3xl font-bold text-white leading-tight">Đặt Hàng Thành Công!</h1>
+                <p class="text-sm text-durian-accent/80 leading-relaxed max-w-sm mx-auto">
+                    Cảm ơn bạn đã lựa chọn Durapure. Sầu riêng hữu cơ tuyển chọn đang trên đường tới bạn.
+                </p>
+            </div>
+
+            <!-- Order Details Card -->
+            <div id="order-summary-box" class="bg-durian border border-durian-lighter/60 rounded-lg p-6 space-y-4 text-left text-sm font-sans">
+                <!-- Will be populated dynamically by script below -->
+                <div class="flex justify-between items-center text-xs text-durian-accent/60 border-b border-durian-lighter/40 pb-2">
+                    <span>MÃ ĐƠN HÀNG:</span>
+                    <span id="summary-code" class="text-white font-bold font-mono">PV-123456</span>
+                </div>
+                <div class="space-y-2">
+                    <div class="flex justify-between">
+                        <span class="text-durian-accent/70">Khách hàng:</span>
+                        <span id="summary-name" class="text-white font-semibold">-</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-durian-accent/70">Số điện thoại:</span>
+                        <span id="summary-phone" class="text-white font-semibold">-</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-durian-accent/70">Thời gian:</span>
+                        <span id="summary-date" class="text-white">-</span>
+                    </div>
+                    <div class="flex justify-between border-t border-durian-lighter/40 pt-2 mt-2">
+                        <span class="text-durian-accent font-semibold">Tổng thanh toán:</span>
+                        <span id="summary-total" class="text-durian-gold font-bold text-base">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment QR Section -->
+            <div class="bg-white rounded-lg p-6 flex flex-col items-center justify-center space-y-4 shadow-inner">
+                <h3 class="text-durian-dark font-bold font-serif text-lg">Hướng Dẫn Thanh Toán</h3>
+                <p class="text-xs text-gray-600 leading-relaxed px-4">Quét mã QR dưới đây bằng ứng dụng ngân hàng. Số tiền và nội dung sẽ được điền tự động.</p>
+                <div class="relative">
+                    <img id="payment-qr-img" src="" alt="VietQR" class="w-56 h-56 object-contain border border-gray-200 rounded p-2 hidden z-10 relative">
+                    <div id="payment-qr-skeleton" class="w-56 h-56 bg-gray-100 animate-pulse rounded border border-gray-200 absolute top-0 left-0"></div>
+                </div>
+                <div class="text-center text-xs text-gray-700 space-y-1 pt-2 border-t border-gray-100 w-full">
+                    <p>Ngân hàng: <strong>VietinBank</strong></p>
+                    <p>Chủ tài khoản: <strong>DO HUU MINH TOAN</strong></p>
+                    <p>Số tài khoản: <strong class="text-durian-dark text-sm">103879522106</strong></p>
+                    <p>Nội dung: <strong id="transfer-content" class="text-forest text-sm">PV-123456</strong></p>
+                </div>
+            </div>
+
+            <!-- Status Notice -->
+            <div class="bg-durian-gold/10 border border-durian-gold/30 rounded p-4">
+                <p class="text-xs text-durian-gold leading-relaxed font-sans">
+                    Hệ thống đã gửi một <strong>Email xác nhận đơn hàng</strong> tới hộp thư của bạn. Vui lòng thanh toán để chúng tôi có thể xử lý và giao hàng cho bạn sớm nhất!
+                </p>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex flex-col sm:flex-row gap-3 pt-2">
+                <a href="shop.html" class="flex-1 bg-forest hover:bg-forest-hover text-white text-xs font-bold py-4 rounded transition-all duration-300 tracking-wider text-center uppercase block font-sans">
+                    TIẾP TỤC MUA SẮM
+                </a>
+                <a href="index.html" class="flex-1 border border-durian-gold text-durian-gold hover:bg-durian-gold hover:text-durian-dark text-xs font-bold py-4 rounded transition-all duration-300 tracking-wider text-center uppercase block font-sans">
+                    VỀ TRANG CHỦ
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer Container -->
+    <footer id="footer-container" class="bg-durian-dark border-t border-durian-lighter text-durian-accent">
+        <!-- Will be loaded dynamically from app.js -->
+    </footer>
+
+    <!-- Core App JS -->
+    <script src="js/app.js"></script>
+
+    <!-- Populate Details Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const lang = localStorage.getItem('durapure_lang') || 'VI';
+
+            // Retrieve last order from sessionStorage
+            const lastOrderStr = sessionStorage.getItem('lastOrder');
+            if (lastOrderStr) {
+                try {
+                    const order = JSON.parse(lastOrderStr);
+
+                    const orderCode = order.orderId || ("PV-" + Math.floor(100000 + Math.random() * 900000));
+
+                    document.getElementById('summary-code').innerText = orderCode;
+                    document.getElementById('summary-name').innerText = order.customerName || (lang === 'EN' ? 'Durapure Customer' : 'Khách hàng Durapure');
+                    document.getElementById('summary-phone').innerText = order.phone || '-';
+                    document.getElementById('summary-total').innerText = order.totalAmount ? formatMoney(order.totalAmount) : '0đ';
+
+                    document.getElementById('transfer-content').innerText = orderCode;
+
+                    // Generate QR
+                    if (order.totalAmount) {
+                        const qrUrl = `https://img.vietqr.io/image/970415-103879522106-V5TjV6h.jpg?amount=${order.totalAmount}&addInfo=${orderCode}&accountName=DO%20HUU%20MINH%20TOAN`;
+                        const img = document.getElementById('payment-qr-img');
+                        img.onload = () => {
+                            img.classList.remove('hidden');
+                            const skeleton = document.getElementById('payment-qr-skeleton');
+                            if (skeleton) skeleton.classList.add('hidden');
+                        };
+                        img.src = qrUrl;
+                    }
+
+                    const now = new Date();
+                    const dateStr = now.toLocaleDateString(lang === 'EN' ? 'en-US' : 'vi-VN') + " " + now.toLocaleTimeString(lang === 'EN' ? 'en-US' : 'vi-VN', { hour: '2-digit', minute: '2-digit' });
+                    document.getElementById('summary-date').innerText = dateStr;
+
+                    // Clear so it doesn't persist on page refresh
+                    sessionStorage.removeItem('lastOrder');
+                } catch (e) {
+                    console.error("Error parsing last order", e);
+                }
+            } else {
+                // If visited directly without checkout context, load mock/empty state gracefully
+                const mockOrderCode = "PV-" + Math.floor(100000 + Math.random() * 900000);
+                document.getElementById('summary-code').innerText = mockOrderCode;
+                document.getElementById('summary-name').innerText = lang === 'EN' ? 'Valued Customer' : 'Quý khách hàng';
+                document.getElementById('summary-phone').innerText = lang === 'EN' ? 'Registered via form' : 'Đăng ký qua form';
+                document.getElementById('summary-total').innerText = lang === 'EN' ? 'Free shipping' : 'Miễn phí vận chuyển';
+                document.getElementById('transfer-content').innerText = mockOrderCode;
+
+                const now = new Date();
+                document.getElementById('summary-date').innerText = now.toLocaleDateString(lang === 'EN' ? 'en-US' : 'vi-VN');
+            }
+        });
+
+        // Helper helper function locally if app.js is not loaded yet
+        function formatMoney(amount) {
+            return amount.toLocaleString('vi-VN') + 'đ';
+        }
+    </script>
+</body>
+</html>

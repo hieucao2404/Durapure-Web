@@ -1,0 +1,55 @@
+name: durapure
+
+services:
+  database:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: durapure
+      POSTGRES_USER: durapure
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-durapure_local_only}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+      - ./BanCafe/backend/init_supabase.sql:/docker-entrypoint-initdb.d/001-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U durapure -d durapure"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./BanCafe/backend
+    environment:
+      PORT: 5000
+      DATABASE_URL: postgresql://durapure:${POSTGRES_PASSWORD:-durapure_local_only}@database:5432/durapure
+      DATABASE_SSL: "false"
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+    ports:
+      - "5000:5000"
+    volumes:
+      - uploads_data:/app/uploads
+    depends_on:
+      database:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:5000/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./BanCafe/wwwroot
+    ports:
+      - "8000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  uploads_data:
