@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: durapure
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/health
+    preDeployCommand: node setup_db.js
+    autoDeployTrigger: commit
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: durapure-db
+          property: connectionString
+      - key: DATABASE_SSL
+        value: "false"
+      - key: STATIC_ROOT
+        value: /app/public
+
+databases:
+  - name: durapure-db
+    plan: free
+    region: singapore
+    databaseName: durapure
+    user: durapure
+    postgresMajorVersion: "18"
+    ipAllowList: []

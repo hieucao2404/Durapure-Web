@@ -24,8 +24,13 @@ app.use(cors({
 app.use(express.json({ limit: '500mb' })); // Support large base64 image/video uploads
 app.use(express.urlencoded({ extended: true, limit: '500mb' }));
 
-// Serve uploaded media
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Serve uploaded media and, in the cloud image, the bundled storefront.
+const uploadsDir = process.env.UPLOADS_DIR || path.join(__dirname, 'uploads');
+const staticRoot = process.env.STATIC_ROOT || path.join(__dirname, '..', 'wwwroot');
+app.use('/uploads', express.static(uploadsDir));
+if (fs.existsSync(staticRoot)) {
+  app.use(express.static(staticRoot));
+}
 
 // PostgreSQL Database Connection Pool
 // Local Docker uses an unencrypted connection. Hosted databases can opt into
@@ -40,7 +45,6 @@ const pool = new Pool({
 
 // Helper: Save Base64 Uploads to local disk
 function saveBase64File(fileName, base64Data, req) {
-  const uploadsDir = path.join(__dirname, 'uploads');
   if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
   }

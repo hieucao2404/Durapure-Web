@@ -56,3 +56,14 @@ Checkout works without email credentials, but confirmation email requires SMTP s
 - `BanCafe/backend`: Node.js API and PostgreSQL initialization
 - `BanCafe`: optional .NET Framework WebView2 desktop wrapper
 - `compose.yaml`: complete local environment
+## Deploy on Render
+
+This repository includes a Render Blueprint that creates one Docker web service and one PostgreSQL database in Singapore.
+
+1. Push the repository to GitHub.
+2. Open https://dashboard.render.com/blueprints and select **New Blueprint Instance**.
+3. Connect the `hieucao2404/Durapure-Web` repository.
+4. Confirm the resources and select **Apply**.
+5. Wait for the database setup and web deployment to finish, then open the generated `onrender.com` URL.
+
+The free configuration is suitable for a preview. Free web services can sleep when idle, free PostgreSQL expires after 30 days, SMTP ports are unavailable, and uploaded files are not persistent across redeploys. Use paid PostgreSQL and a paid web service with a persistent disk before accepting real orders.

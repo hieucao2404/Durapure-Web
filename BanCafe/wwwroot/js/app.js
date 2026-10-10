@@ -6,10 +6,11 @@ let farmVideos = [];
 let currentLang = localStorage.getItem('durapure_lang') || 'VI';
 let websiteSettings = null;
 
-// Backend API URL (for standard web browsers)
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.endsWith('.test')
+// Use the same origin in browsers. The optional Windows WebView desktop wrapper
+// still talks to the locally running API directly.
+const API_BASE_URL = window.location.hostname === 'durapure.local'
     ? 'http://localhost:5000/api'
-    : 'https://bancafe-backend-api.onrender.com/api';
+    : '/api';
 
 const langMap = {
     VI: {
