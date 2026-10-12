@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
-async function run() {
+async function initializeDatabase() {
   if (!process.env.DATABASE_URL) {
     throw new Error('DATABASE_URL is required');
   }
@@ -34,15 +34,16 @@ async function run() {
     console.log('Initializing database schema and sample content...');
     await pool.query(`BEGIN;\n${sql}\nCOMMIT;`);
     console.log('Database initialized successfully.');
-  } catch (err) {
-    console.error('Database initialization failed:', err);
-    process.exitCode = 1;
   } finally {
     await pool.end();
   }
 }
 
-run().catch(err => {
-  console.error(err);
-  process.exitCode = 1;
-});
+if (require.main === module) {
+  initializeDatabase().catch(err => {
+    console.error('Database initialization failed:', err);
+    process.exitCode = 1;
+  });
+}
+
+module.exports = { initializeDatabase };

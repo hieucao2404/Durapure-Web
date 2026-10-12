@@ -639,7 +639,19 @@ app.post('/api/admin/settings/save', async (req, res) => {
   }
 });
 
-// Start Server
-app.listen(PORT, () => {
-  console.log(`Durapure API server running on port ${PORT}`);
+// Start the HTTP server after optional cloud database initialization.
+async function startServer() {
+  if (process.env.AUTO_INIT_DATABASE === 'true') {
+    const { initializeDatabase } = require('./setup_db');
+    await initializeDatabase();
+  }
+
+  app.listen(PORT, () => {
+    console.log(`Durapure API server running on port ${PORT}`);
+  });
+}
+
+startServer().catch(err => {
+  console.error('Durapure failed to start:', err);
+  process.exit(1);
 });
