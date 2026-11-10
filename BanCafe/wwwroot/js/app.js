@@ -12,6 +12,22 @@ const API_BASE_URL = window.location.hostname === 'durapure.local'
     ? 'http://localhost:5000/api'
     : '/api';
 
+// Change this URL to swap the demo footage. Keep DEMO for prerecorded videos.
+const GARDEN_CAMERA_CONFIG = {
+    videoUrl: 'https://www.youtube.com/watch?v=mg2AFVIfEgM',
+    cameraId: 'CAM-01',
+    title: { VI: 'Vườn sầu riêng', EN: 'Durian orchard' },
+    farmName: 'Durapure (demo)',
+    status: 'DEMO'
+};
+
+function renderGardenCamera(containerId) {
+    const container = document.getElementById(containerId);
+    if (container && window.GardenCamera) {
+        window.GardenCamera.render(container, { ...GARDEN_CAMERA_CONFIG, language: currentLang });
+    }
+}
+
 const langMap = {
     VI: {
         navHome: "TRANG CHỦ",
@@ -2037,6 +2053,12 @@ function renderProductDetailPage() {
         </div>
     `;
 
+    const gardenCameraProduct = document.getElementById('garden-camera-product');
+    if (gardenCameraProduct) {
+        gardenCameraProduct.classList.remove('hidden');
+        renderGardenCamera('garden-camera-product');
+    }
+
     // 2. Render Storage Guide
     const brewingSec = document.getElementById('brewing-guide-section');
     if (brewingSec && careMethods.length > 0) {
@@ -2670,6 +2692,8 @@ function applyTranslation() {
 
     // 2. Index / Home page translations
     if (isHome) {
+        renderGardenCamera('garden-camera-home');
+
         const heroBadge = document.querySelector('section.relative span.text-durian-gold');
         if (heroBadge) {
             heroBadge.innerText = currentLang === 'EN'

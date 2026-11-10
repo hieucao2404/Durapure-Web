@@ -56,6 +56,15 @@ Checkout works without email credentials, but confirmation email requires SMTP s
 - `BanCafe/backend`: Node.js API and PostgreSQL initialization
 - `BanCafe`: optional .NET Framework WebView2 desktop wrapper
 - `compose.yaml`: complete local environment
+
+## Garden camera demo
+
+The home page and each product detail page show a camera-style monitor with the same prerecorded YouTube orchard video. The video location is shown as unverified because the sample footage does not establish a product's farm of origin.
+
+To change the footage or camera label, edit `GARDEN_CAMERA_CONFIG` near the top of `BanCafe/wwwroot/js/app.js`. Use a YouTube watch, short, live, or embed URL for `videoUrl`. The reusable renderer is in `BanCafe/wwwroot/js/garden-camera.js`. Its `status` accepts `DEMO`, `LIVE`, or `OFFLINE`; keep `DEMO` for prerecorded footage. A missing or unsupported URL displays the offline fallback. The monitor includes a fullscreen button.
+
+Run the app as above, then open the home page or `http://localhost:8000/product-detail.html?id=1`. The video requires an internet connection to YouTube.
+
 ## Deploy on Render
 
 This repository includes a Render Blueprint that creates one Docker web service and one PostgreSQL database in Singapore.
